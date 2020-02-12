@@ -12,6 +12,18 @@ import numpy as np
 5. Add Flag if want to display output result
 """
 
+def dlibFaceDetector(np_img):
+    import dlib
+    detector = dlib.get_frontal_face_detector()
+    gray = cv2.cvtColor(np_img, cv2.COLOR_BGR2GRAY)
+    FaceRect = detector(gray,1)
+    for fd in FaceRect:        
+        x = fd.left()
+        y = fd.top()
+        w = fd.right() - x
+        h = fd.bottom() - y
+        np_img = cv2.rectangle(np_img,(x-15,y-25),(x+w+10,y+h+10),(255,0,0),2)
+    return np_img
 
 def applyHaarFaceDetector(np_img):
     PATH_TO_XML = '/home/amarp/Documents/pyproj/CV/forFoilio/yolo-on-OID/HaarTrained/frontalFace10/haarcascade_frontalface_alt.xml'
@@ -22,7 +34,7 @@ def applyHaarFaceDetector(np_img):
     faces = face_cascade.detectMultiScale(gray)
     for (x,y,w,h) in faces:
         np_img = cv2.rectangle(np_img,(x-15,y-25),(x+w+10,y+h+10),(255,0,0),2)
-    return
+    return np_img
 
 def applyYoloHelmetDetector(np_img):
     # Initialize the parameters
@@ -65,19 +77,24 @@ def applyYoloHelmetDetector(np_img):
                 confidences.append(float(confidence))
                 boxes.append([x, y, w, h])
                 cv2.rectangle(img, (int(x), int(y)), (int(x+w), int(y+h)), (0,200,0), thickness=2)
-                cv2.putText(img,obj_class[0] ,(int(x), int(y+.05*Height)),cv2.FONT_HERSHEY_SIMPLEX,0.5,(128,255,0),2)
+                cv2.putText(img,'Helmet' ,(int(x), int(y+.05*Height)),cv2.FONT_HERSHEY_SIMPLEX,0.5,(128,255,0),2)
     return
 
 #==============================================================================
 
 
-IMG_PATH = "/home/amarp/Documents/pyproj/CV/forFoilio/yolo-on-OID/58163287.cms.jpeg"
+IMG_PATH = "/home/amarp/Documents/pyproj/CV/forFoilio/yolo-on-OID/sample_img/ht-pune_23311.jpg"
 YOLO_MODEL_PATH = "weights/yolov3_final.weights"
 YOLO_CONFIG_PATH = "yolo_cfg/yolov3.cfg"
 
 img = cv2.imread(IMG_PATH)
 Width = img.shape[1]
 Height = img.shape[0]
+
+
+# img = applyHaarFaceDetector(img)
+img = dlibFaceDetector(img)
+
 
 #=========================================HaarCascade - Face Detect============
 # PATH_TO_XML = '/home/amarp/Documents/pyproj/CV/forFoilio/yolo-on-OID/HaarTrained/frontalFace10/haarcascade_frontalface_alt.xml'
