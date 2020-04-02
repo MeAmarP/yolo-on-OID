@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import time
 
 """
 #TODO:
@@ -83,10 +84,11 @@ def applyYoloHelmetDetector(np_img):
 #==============================================================================
 
 
-IMG_PATH = "/home/amarp/Documents/pyproj/CV/forFoilio/yolo-on-OID/sample_img/ht-pune_23311.jpg"
+IMG_PATH = "sample_img/india_road.jpeg"
 YOLO_MODEL_PATH = "weights/yolov3_final.weights"
 YOLO_CONFIG_PATH = "yolo_cfg/yolov3.cfg"
 
+start = time.time()
 img = cv2.imread(IMG_PATH)
 Width = img.shape[1]
 Height = img.shape[0]
@@ -94,6 +96,7 @@ Height = img.shape[0]
 
 # img = applyHaarFaceDetector(img)
 img = dlibFaceDetector(img)
+print(time.time()-start)
 
 
 #=========================================HaarCascade - Face Detect============
