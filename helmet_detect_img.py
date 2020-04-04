@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 import time
+import dlib
+
 
 """
 #TODO:
@@ -13,48 +15,38 @@ import time
 5. Add Flag if want to display output result
 """
 
+#================== Init ========================
+detector = dlib.get_frontal_face_detector()
+
+
+YOLO_MODEL_PATH = "weights/yolov3_final.weights"
+YOLO_CONFIG_PATH = "yolo_cfg/yolov3.cfg"
+net = cv2.dnn.readNet(YOLO_CONFIG_PATH, YOLO_MODEL_PATH)
+confThreshold = 0.5  #Confidence threshold
+nmsThreshold = 0.4   #Non-maximum suppression threshold
+
 def dlibFaceDetector(np_img):
-    import dlib
-    detector = dlib.get_frontal_face_detector()
-    gray = cv2.cvtColor(np_img, cv2.COLOR_BGR2GRAY)
-    FaceRect = detector(gray,1)
+    # gray = cv2.cvtColor(np_img, cv2.COLOR_BGR2GRAY)
+    FaceRect = detector(np_img,1)
     for fd in FaceRect:        
-        x = fd.left()
-        y = fd.top()
-        w = fd.right() - x
-        h = fd.bottom() - y
-        np_img = cv2.rectangle(np_img,(x-15,y-25),(x+w+10,y+h+10),(255,0,0),2)
+        x = fd.rect.left()
+        y = fd.rect.top()
+        w = fd.rect.right() - x
+        h = fd.rect.bottom() - y
+        np_img = cv2.rectangle(np_img,(x-15,y-25),(x+w+10,y+h+10),(0,0,200),2)
     return np_img
 
-def applyHaarFaceDetector(np_img):
-    PATH_TO_XML = '/home/amarp/Documents/pyproj/CV/forFoilio/yolo-on-OID/HaarTrained/frontalFace10/haarcascade_frontalface_alt.xml'
-    face_cascade = cv2.CascadeClassifier(PATH_TO_XML)
-    gray = cv2.cvtColor(np_img, cv2.COLOR_BGR2GRAY)
-    # clahe = cv2.createCLAHE(clipLimit=0.8,tileGridSize=(8,8))
-    # gray = clahe.apply(gray)
-    faces = face_cascade.detectMultiScale(gray)
-    for (x,y,w,h) in faces:
-        np_img = cv2.rectangle(np_img,(x-15,y-25),(x+w+10,y+h+10),(255,0,0),2)
-    return np_img
-
-def applyYoloHelmetDetector(np_img):
+def applyYoloHelmetDetector(np_img,yolo_net):
     # Initialize the parameters
-    confThreshold = 0.5  #Confidence threshold
-    nmsThreshold = 0.4   #Non-maximum suppression threshold
     inpWidth = 416       #Width of network's input image
     inpHeight = 416      #Height of network's input image
-    YOLO_MODEL_PATH = "weights/yolov3_final.weights"
-    YOLO_CONFIG_PATH = "yolo_cfg/yolov3.cfg"
 
-    net = cv2.dnn.readNet(YOLO_CONFIG_PATH, YOLO_MODEL_PATH)
     blob = cv2.dnn.blobFromImage(img, 1 / 255.0, (inpWidth,inpHeight), swapRB=True, crop=False)
-
-    net.setInput(blob)
-
-    layer_names =  net.getLayerNames()
-    output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
-    objdetects = net.forward(output_layers)
-    print(type(objdetects))
+    yolo_net.setInput(blob)
+    layer_names =  yolo_net.getLayerNames()
+    
+    output_layers = [layer_names[i[0] - 1] for i in yolo_net.getUnconnectedOutLayers()]
+    objdetects = yolo_net.forward(output_layers)
 
     class_ids = []
     confidences = []
@@ -67,7 +59,7 @@ def applyYoloHelmetDetector(np_img):
             confidence = scores[class_id]
             
             if confidence > 0.5:            
-                print(confidence)
+                # print(confidence)
                 center_x = int(detect[0] * Width)
                 center_y = int(detect[1] * Height)
                 w = int(detect[2] * Width)
@@ -78,13 +70,13 @@ def applyYoloHelmetDetector(np_img):
                 confidences.append(float(confidence))
                 boxes.append([x, y, w, h])
                 cv2.rectangle(img, (int(x), int(y)), (int(x+w), int(y+h)), (0,200,0), thickness=2)
-                cv2.putText(img,'Helmet' ,(int(x), int(y+.05*Height)),cv2.FONT_HERSHEY_SIMPLEX,0.5,(128,255,0),2)
-    return
+                cv2.putText(img,'With Helmet' ,(int(x), int(y+.05*Height)),cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,255,0),2)
+    return img
 
 #==============================================================================
 
 
-IMG_PATH = "sample_img/india_road.jpeg"
+IMG_PATH = "sample_img/indiaroad1.jpeg"
 YOLO_MODEL_PATH = "weights/yolov3_final.weights"
 YOLO_CONFIG_PATH = "yolo_cfg/yolov3.cfg"
 
@@ -96,7 +88,8 @@ Height = img.shape[0]
 
 # img = applyHaarFaceDetector(img)
 img = dlibFaceDetector(img)
-print(time.time()-start)
+# img = applyYoloHelmetDetector(img,net)
+print("Opertion Times:",time.time()-start)
 
 
 #=========================================HaarCascade - Face Detect============
