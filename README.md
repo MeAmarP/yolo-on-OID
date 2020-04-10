@@ -34,10 +34,8 @@ Goal Here is to extract BBOX annoted data from Open Image Database for particula
             --- train.txt
             --- val.txt
 
-### References:
-To Download above mentioed csv files and understand bbox format etc.
+### Thanks:
 + https://storage.googleapis.com/openimages/web/download.html
-
 + https://github.com/harshilpatel312/open-images-downloader
 + https://stackoverflow.com/a/5612  1386/9018788
 + https://towardsdatascience.com/training-yolo-for-object-detection-in-pytorch-with-your-custom-dataset-the-simple-way-1aa6f56cf7d9
