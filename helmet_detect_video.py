@@ -15,15 +15,18 @@ detector = dlib.get_frontal_face_detector()
 YOLO_MODEL_PATH = "weights/yolov3_final.weights"
 YOLO_CONFIG_PATH = "yolo_cfg/yolov3.cfg"
 yolo_net = cv2.dnn.readNet(YOLO_CONFIG_PATH, YOLO_MODEL_PATH)
-confThreshold = 0.5  #Confidence threshold
 nmsThreshold = 0.4   #Non-maximum suppression threshold
+
+dlibFaceThresh = 0.88
+yoloHelmetThresh = 0.88  #Confidence threshold
+
 
 
 def dlibFaceDetector(np_img):
     #Based on HoG
     # gray = cv2.cvtColor(np_img, cv2.COLOR_BGR2GRAY)
     FaceRect,scores,_ = detector.run(np_img,1)
-    if FaceRect and scores[0] > 0.888888:
+    if FaceRect and scores[0] > dlibFaceThresh:
         isfaceFound = True
         for fd in FaceRect:
             x = fd.left()
@@ -59,7 +62,7 @@ def applyYoloHelmetDetector(np_img,yolo_net):
             class_id = np.argmax(scores)
             confidence = scores[class_id]
             
-            if confidence > 0.88:            
+            if confidence > yoloHelmetThresh:            
                 center_x = int(detect[0] * Width)
                 center_y = int(detect[1] * Height)
                 w = int(detect[2] * Width)
