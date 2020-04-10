@@ -53,7 +53,7 @@ def applyYoloHelmetDetector(np_img,yolo_net):
 
     class_ids = []
     confidences = []
-    boxes = []q
+    boxes = []
 
     for out in objdetects:
         for detect in out:
@@ -97,5 +97,6 @@ if __name__ == "__main__":
     img = applyYoloHelmetDetector(img,net)
     print("Opertion Times:",time.time()-start)
     cv2.imshow('img',img)
+    cv2.imwrite('sample_img/rossi-YZR-M1_output.jpg',img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
