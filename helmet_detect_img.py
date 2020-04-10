@@ -36,7 +36,7 @@ def dlibFaceDetector(np_img):
         w = fd.right() - x
         h = fd.bottom() - y
         np_img = cv2.rectangle(np_img,(x-15,y-25),(x+w+10,y+h+10),(0,0,200),2)
-        cv2.putText(np_img,'No Helmet' ,(int(x), int(y+0.01*np_img.shape[0])),cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,0,255),2)
+        cv2.putText(np_img,'Face' ,(int(x), int(y+0.01*np_img.shape[0])),cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,0,255),2)
     return np_img
 
 def applyYoloHelmetDetector(np_img,yolo_net):
@@ -53,7 +53,7 @@ def applyYoloHelmetDetector(np_img,yolo_net):
 
     class_ids = []
     confidences = []
-    boxes = []
+    boxes = []q
 
     for out in objdetects:
         for detect in out:
@@ -73,13 +73,13 @@ def applyYoloHelmetDetector(np_img,yolo_net):
                 confidences.append(float(confidence))
                 boxes.append([x, y, w, h])
                 cv2.rectangle(img, (int(x), int(y)), (int(x+w), int(y+h)), (0,200,0), thickness=2)
-                cv2.putText(img,'With Helmet' ,(int(x), int(y+.05*Height)),cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,255,0),2)
+                cv2.putText(img,'Helmet' ,(int(x), int(y+.05*Height)),cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,255,0),2)
     return img
 
 #==============================================================================
 
 if __name__ == "__main__":
-    IMG_PATH = "sample_img/indiaroad1.jpeg"
+    IMG_PATH = "sample_img/Valentino rossi-YZR-M1.jpg"
     YOLO_MODEL_PATH = "weights/yolov3_final.weights"
     YOLO_CONFIG_PATH = "yolo_cfg/yolov3.cfg"
 
