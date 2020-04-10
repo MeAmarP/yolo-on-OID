@@ -1,8 +1,7 @@
-# yolo-on-OID
-Applying YOLO on classes from Open Image Database 
+# yolo-on-OpenImageDatabse for building Helmet Detector Use Case
 
-Goal Here is to extract labelled data from Open Image Database for particular class.
-Selected Class = "Helmet"
+Goal Here is to extract BBOX annoted data from Open Image Database for particular class and build object detector using YOLO.
+*Selected Class = "Helmet"*
 
 ### Approch:
 + Download Img data for selected class
@@ -12,6 +11,8 @@ Selected Class = "Helmet"
   + train imgage annoted bbox file: **Image ID, Class ID and BBoxe(xmin,xmax,ymin,ymax)** etc.
   + test imgid file **TEST Image Id and Access URL**
   + test image annoted bbox file **TEST Image ID, Class ID and BBoxe(xmin,xmax,ymin,ymax)** etc.
+
+### To Build Helmet Detector
 + As we are only concerned about class "Helmet", Keep classid related records in Annotation files
 + Other option is to keep records for which we have image available in dir.
   + Use the `isin` method `df[df['ImageID'].isin(list_img_id_in_dir)]`
@@ -37,9 +38,7 @@ Selected Class = "Helmet"
 To Download above mentioed csv files and understand bbox format etc.
 + https://storage.googleapis.com/openimages/web/download.html
 
-Used below repo, to download images for selected class
 + https://github.com/harshilpatel312/open-images-downloader
-
 + https://stackoverflow.com/a/5612  1386/9018788
 + https://towardsdatascience.com/training-yolo-for-object-detection-in-pytorch-with-your-custom-dataset-the-simple-way-1aa6f56cf7d9
 + https://www.learnopencv.com/training-yolov3-deep-learning-based-custom-object-detector/
