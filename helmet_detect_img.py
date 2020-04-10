@@ -26,14 +26,17 @@ nmsThreshold = 0.4   #Non-maximum suppression threshold
 #     img = cv2.rectangle(img,(x-15,y-25),(x+w+10,y+h+10),(255,0,0),2)
 
 def dlibFaceDetector(np_img):
+    #Based on HoG
     # gray = cv2.cvtColor(np_img, cv2.COLOR_BGR2GRAY)
-    FaceRect = detector(np_img,1)
-    for fd in FaceRect:        
-        x = fd.rect.left()
-        y = fd.rect.top()
-        w = fd.rect.right() - x
-        h = fd.rect.bottom() - y
+    FaceRect,scores,_ = detector.run(np_img,1)
+    for fd,scr in zip(FaceRect,scores):
+        print(fd,'============',scr)
+        x = fd.left()
+        y = fd.top()
+        w = fd.right() - x
+        h = fd.bottom() - y
         np_img = cv2.rectangle(np_img,(x-15,y-25),(x+w+10,y+h+10),(0,0,200),2)
+        cv2.putText(np_img,'No Helmet' ,(int(x), int(y+0.01*np_img.shape[0])),cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,0,255),2)
     return np_img
 
 def applyYoloHelmetDetector(np_img,yolo_net):
@@ -87,11 +90,12 @@ if __name__ == "__main__":
     Width = img.shape[1]
     Height = img.shape[0]
 
+    # img = dlibFaceDetector(img)
+    # img = applyYoloHelmetDetector(img,net)
     img = dlibFaceDetector(img)
+    # if not isfaceFound:
     img = applyYoloHelmetDetector(img,net)
     print("Opertion Times:",time.time()-start)
-
     cv2.imshow('img',img)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    cv2.waitKey(0)
     cv2.destroyAllWindows()
